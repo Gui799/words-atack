@@ -1,0 +1,2 @@
+# pygame-ce fornece o mesmo import pygame. Não instale os dois na mesma venv.
+pygame-ce==2.5.8

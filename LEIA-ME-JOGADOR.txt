@@ -1,0 +1,39 @@
+WORDS ATACK — PRÉVIA 0.1.0
+=========================
+
+Windows 64 bits. Não precisa de Python instalado.
+Extraia todo o ZIP e abra WordsAtack.exe.
+
+Um computador gigante está atacando a cidade com palavras digitais.
+O governo entregou um canhão laser para defender sua casa.
+Escolha um nickname, digite uma palavra que esteja na tela e aperte Enter.
+
+CONTROLES
+Enter: começar / disparar / jogar novamente
+Backspace: apagar uma letra
+Esc: pausar ou voltar
+F2 no menu: configurar o servidor do ranking
+Mouse: botões do menu
+
+REGRAS
+Cinco impactos destroem sua casa.
+Uma palavra vale 10 pontos por letra.
+Acertos consecutivos aumentam o multiplicador a cada cinco acertos,
+até x4. Um erro ou impacto zera o combo.
+O nível aumenta a cada cinco palavras eliminadas.
+Precisão = disparos corretos / tentativas com Enter.
+Partidas abandonadas não entram no ranking.
+
+OFFLINE E RANKING
+O jogo funciona sem internet. As partidas concluídas são salvas localmente.
+Dados no Windows: %LOCALAPPDATA%\WordsAtack
+Se houver um servidor disponível, configure sua URL no menu F2.
+Para apresentação no mesmo PC: http://127.0.0.1:5000
+Não coloque /api no final da URL.
+Reabra uma partida ou o ranking para reenviar resultados pendentes.
+O ranking dentro do jogo é local. O ranking compartilhado fica no site.
+
+PRÉVIA ACADÊMICA
+Gráficos provisórios desenhados em código. Sem instalação de serviços.
+O ranking recebe dados do cliente; não é um sistema antitrapaça.
+Esta versão não tem assinatura digital. Baixe somente da Release do projeto.

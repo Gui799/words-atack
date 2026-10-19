@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS scores (
+    id TEXT PRIMARY KEY,
+    nickname TEXT NOT NULL CHECK(length(nickname) BETWEEN 1 AND 18),
+    score INTEGER NOT NULL CHECK(score BETWEEN 0 AND 10000000),
+    words INTEGER NOT NULL CHECK(words BETWEEN 0 AND 100000),
+    accuracy REAL NOT NULL CHECK(accuracy BETWEEN 0 AND 100),
+    duration REAL NOT NULL CHECK(duration BETWEEN 0 AND 86400),
+    level INTEGER NOT NULL CHECK(level BETWEEN 1 AND 20001),
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS ranking_order
+ON scores(score DESC, accuracy DESC, duration ASC, created_at DESC);

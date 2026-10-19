@@ -1,0 +1,2 @@
+-r requirements-game.txt
+-r requirements-server.txt
