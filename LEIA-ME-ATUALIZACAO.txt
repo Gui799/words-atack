@@ -1,0 +1,14 @@
+ATUALIZAÇÃO VISUAL — WORDS ATACK
+
+Copie a pasta docs e os arquivos de documentação deste ZIP para dentro da
+pasta do seu repositório Words Atack. Confirme a substituição de index.html
+e style.css. A pasta docs já deve conter app.js, config.js e a captura gameplay.png.
+
+Este ZIP NÃO inclui config.js: suas URLs de API, download e GitHub são preservadas.
+Inclua todos os arquivos novos em docs/assets, inclusive a fonte e sua licença.
+
+GitHub Desktop: confira Changes, Commit to main e Push origin.
+Não é necessário gerar outra Release: o executável não foi alterado.
+
+Abra GUIA-PIXEL-ART.md para as medidas dos sprites e posições de referência.
+Base de arte: 550 x 380 pixels. Exibição padrão: 1100 x 760 (2x).

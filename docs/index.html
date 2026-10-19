@@ -7,6 +7,7 @@
   <meta name="description" content="Words Atack: defenda sua casa das palavras digitais de um computador gigante. Um jogo de digitação para Windows.">
   <title>Words Atack — Seu teclado é sua defesa</title>
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/Tiny5.ttf" as="font" type="font/ttf" crossorigin>
   <link rel="stylesheet" href="style.css">
   <script src="config.js" defer></script>
   <script src="app.js" defer></script>
@@ -23,13 +24,15 @@
         <p class="eyebrow"><span class="signal"></span> TRANSMISSÃO DE EMERGÊNCIA // SETOR 07</p>
         <h1>A cidade caiu.<br>Sua casa<br><em>ainda resiste.</em></h1>
         <p class="intro">Um computador gigante transformou palavras em armas. O governo entregou seu canhão laser. Agora, cada tecla é uma chance de defender o que é seu.</p>
-        <a class="button primary" href="#download">ASSUMIR A DEFESA <span>↓</span></a>
+        <div class="game-tags" aria-label="Características do jogo"><span>PIXEL ART</span><span>DEFESA POR DIGITAÇÃO</span></div>
+        <a class="button primary" href="#download">ASSUMIR A DEFESA <span aria-hidden="true">↓</span></a>
         <p class="platform">WINDOWS 64 BITS <span>·</span> GRATUITO <span>·</span> JOGÁVEL OFFLINE</p>
       </div>
       <div class="hero-visual">
-        <div class="screen-bar"><span><i></i> CÂMERA DE DEFESA 01</span><span>CAPTURA DA PRÉVIA</span></div>
-        <img src="assets/gameplay.png" width="1100" height="760" alt="Prévia real do jogo: palavras digitais descem de um computador gigante em direção à casa protegida por um canhão laser.">
-        <div class="screen-caption"><span>ALVO: <strong>python</strong></span><span>AGUARDANDO COMANDO <b>_</b></span></div>
+        <div class="screen-bar"><span><i></i> SETOR 07 / DEFESA RESIDENCIAL</span><span>PIXEL ART</span></div>
+        <img class="pixel-art" src="assets/pixel-city.svg" width="550" height="380" alt="Conceito visual provisório em pixel art: computador gigante lançando palavras sobre uma cidade, com uma casa e um canhão laser ao centro.">
+        <div class="screen-caption"><span>CONCEITO VISUAL <strong>PROVISÓRIO</strong></span><span>550 × 380 PX <b>_</b></span></div>
+        <details class="game-preview"><summary>Ver captura da versão jogável atual</summary><img class="pixel-art" src="assets/gameplay.png" width="1100" height="760" alt="Captura da versão jogável atual, ainda com gráficos geométricos provisórios." loading="lazy"></details>
       </div>
     </section>
     <div class="ticker" aria-hidden="true"><div>DEFENDA SUA CASA <span>+</span> DIGITE. MIRE. SOBREVIVA. <span>+</span> SEU TECLADO É SUA DEFESA <span>+</span> DEFENDA SUA CASA <span>+</span></div></div>
@@ -52,6 +55,6 @@
       <aside class="terminal" aria-label="Instruções para começar"><div class="terminal-title"><span></span><span></span><span></span><b>DEFENSE_SETUP.TXT</b></div><p><span>01</span> BAIXE E EXTRAIA O ZIP</p><p><span>02</span> ABRA WordsAtack.exe</p><p><span>03</span> ESCOLHA SEU NICKNAME</p><p><span>04</span> DIGITE PARA SOBREVIVER</p><div class="terminal-end">&gt; A CIDADE CONTA COM VOCÊ<span class="blink">_</span></div></aside>
     </section>
   </main>
-  <footer class="footer wrap"><a class="brand" href="#">WORDS ATACK</a><p>Projeto acadêmico · gráficos provisórios · feito com Python e Pygame</p><a id="repository-link" href="https://github.com" target="_blank" rel="noopener noreferrer">Código no GitHub ↗</a></footer>
+  <footer class="footer wrap"><a class="brand" href="#">WORDS ATACK</a><p>Projeto acadêmico · pixel art em desenvolvimento · Python e Pygame</p><a id="repository-link" href="https://github.com" target="_blank" rel="noopener noreferrer">Código no GitHub ↗</a></footer>
 </body>
 </html>
