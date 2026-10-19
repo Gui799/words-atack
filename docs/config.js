@@ -6,5 +6,5 @@ window.WORDS_ATACK_CONFIG = {
   // ZIP local incluso. Após publicar uma Release, pode usar a URL abaixo:
   // "https://github.com/SEU-USUARIO/words-atack/releases/latest/download/WordsAtack-Windows.zip"
   downloadUrl: "downloads/WordsAtack-Windows.zip",
-  repositoryUrl: "https://github.com/SEU-USUARIO/words-atack"
+  repositoryUrl: "https://github.com/Gui799/words-atack"
 };
