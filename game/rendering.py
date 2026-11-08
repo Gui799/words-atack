@@ -32,9 +32,9 @@ class Renderer:
         self.cursor = self._trim(self._image("ui/cursor.png", alpha=True), (16, 16))
 
         self.computer = self._sheet("animations/computador_sheet.png", 4, 2, (96, 64))
-        hearts = self._sheet("ui/vidas_sheet.png", 4, 1, (8, 8))
+        hearts = self._sheet("ui/vidas_sheet.png", 2, 1, (8, 8))
         self.heart_full = hearts[0]
-        self.heart_empty = hearts[2]
+        self.heart_empty = hearts[1]
         self.waves = self._sheet("animations/ondas_sheet.png", 2, 2, (64, 32))
         self.shots = self._sheet("animations/tiro_sheet.png", 4, 1, (16, 16))
         self.word_frames = self._sheet("animations/palavra_inimiga_sheet.png", 3, 1, (96, 24))
@@ -54,7 +54,16 @@ class Renderer:
         bounds = image.get_bounding_rect()
         if bounds.width and bounds.height:
             image = image.subsurface(bounds).copy()
-        return pygame.transform.scale(image, size)
+        return Renderer._fit(image, size)
+
+    @staticmethod
+    def _fit(image, size):
+        scale = min(size[0] / image.get_width(), size[1] / image.get_height())
+        dimensions = (max(1, round(image.get_width()*scale)), max(1, round(image.get_height()*scale)))
+        result = pygame.Surface(size, pygame.SRCALPHA)
+        scaled = pygame.transform.scale(image, dimensions)
+        result.blit(scaled, scaled.get_rect(center=result.get_rect().center))
+        return result
 
     def _sheet(self, relative, columns, rows, frame_size):
         sheet = self._image(relative, alpha=True)
@@ -64,8 +73,14 @@ class Renderer:
         for row in range(rows):
             for column in range(columns):
                 frame = sheet.subsurface((column * source_w, row * source_h, source_w, source_h)).copy()
-                frames.append(pygame.transform.scale(frame, frame_size))
-        return frames
+                frames.append(frame)
+        bounds = pygame.Rect(0, 0, 0, 0)
+        for frame in frames:
+            for rect in pygame.mask.from_surface(frame, 127).get_bounding_rects():
+                bounds = rect if not bounds.width else bounds.union(rect)
+        if not bounds.width:
+            bounds = frames[0].get_rect()
+        return [self._fit(frame.subsurface(bounds), frame_size) for frame in frames]
 
     def _text(self, label, center, size=14, color=None):
         color = color or self.NAVY
@@ -128,14 +143,14 @@ class Renderer:
         wave_frame = int(now * 7) % len(self.waves)
         wave = self.waves[wave_frame]
         for x in range(-64, S.WIDTH, 64):
-            self.canvas.blit(wave, (x + int((now * 8) % 16), 98))
+            self.canvas.blit(wave, (x + int((now * 8) % 16), 216))
 
         # Computer idle/attack rows, 4 frames each.
         attacking = time.monotonic() < getattr(game, "attack_until", 0)
         row = 1 if attacking else 0
         frame = int(now * (12 if attacking else 2.3)) % 4
         computer = self.computer[row * 4 + frame]
-        self.canvas.blit(computer, computer.get_rect(midtop=(S.WIDTH // 2, 12)))
+        self.canvas.blit(computer, computer.get_rect(midtop=(S.WIDTH // 2, 44)))
 
         # House and the player's cannon sit on the sunlit sand.
         self.canvas.blit(self.house, (457, 236))

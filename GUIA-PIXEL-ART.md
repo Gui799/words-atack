@@ -15,7 +15,7 @@ Os arquivos gerados para esta prévia estão em `game/assets/`. O Pygame divide 
 |---|---:|---:|---:|
 | Cenário diurno completo | 640×360 | imagem única | 640×360 |
 | Computador inimigo | 96×64 | 4 colunas × 2 linhas | 384×128 |
-| Corações de vida | 8×8 | 4 colunas × 1 linha | 32×8 |
+| Corações de vida | 8×8 | 2 colunas × 1 linha | 16×8 |
 | Moldura da palavra inimiga | 96×24 | 3 colunas × 1 linha | 288×24 |
 | Onda do mar | 64×32 | 2 colunas × 2 linhas | 128×64 |
 | Tiro laser | 16×16 | 4 colunas × 1 linha | 64×16 |
@@ -52,3 +52,4 @@ O cursor de mira substitui o cursor do sistema durante o jogo. Rótulos, nicknam
 5. Exporte o sheet inteiro em PNG. Não o amplie para 2×; o jogo faz a escala pelo vizinho mais próximo.
 
 As imagens em `game/assets/animations/` são rascunhos iniciais. Você pode substituí-las pelos seus arquivos do LibreSprite, mantendo os nomes e a grade, ou atualizar as dimensões de leitura em `game/rendering.py`.
+
