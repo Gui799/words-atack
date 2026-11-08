@@ -1,4 +1,4 @@
-WORDS ATACK — PRÉVIA 0.1.0
+WORDS ATACK — PRÉVIA 0.2.0
 =========================
 
 Windows 64 bits. Não precisa de Python instalado.
@@ -33,7 +33,9 @@ Não coloque /api no final da URL.
 Reabra uma partida ou o ranking para reenviar resultados pendentes.
 O ranking dentro do jogo é local. O ranking compartilhado fica no site.
 
-PRÉVIA ACADÊMICA
-Gráficos provisórios desenhados em código. Sem instalação de serviços.
+PRÉVIA ACADÊMICA 0.2.0
+Nova direção diurna em pixel art, com cursor de mira, corações, interface
+ilustrada e spritesheets animados para o computador, palavras e disparos.
+O mar e as nuvens também se movimentam. Sem instalação de serviços.
 O ranking recebe dados do cliente; não é um sistema antitrapaça.
 Esta versão não tem assinatura digital. Baixe somente da Release do projeto.

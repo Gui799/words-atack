@@ -1,14 +1,20 @@
-ATUALIZAÇÃO VISUAL — WORDS ATACK
+ATUALIZAÇÃO DO JOGO — WORDS ATACK 0.2.0
 
-Copie a pasta docs e os arquivos de documentação deste ZIP para dentro da
-pasta do seu repositório Words Atack. Confirme a substituição de index.html
-e style.css. A pasta docs já deve conter app.js, config.js e a captura gameplay.png.
+Esta revisão altera a tela do jogo para 640 x 360 (exibição 1280 x 720), muda
+o cenário para o dia e integra a nova interface e os spritesheets animados.
 
-Este ZIP NÃO inclui config.js: suas URLs de API, download e GitHub são preservadas.
-Inclua todos os arquivos novos em docs/assets, inclusive a fonte e sua licença.
+Arquivos principais alterados/adicionados:
+- game/main.py, game/settings.py e game/rendering.py
+- game/assets/ (cenário, interface, cursor, vidas, inimigo e efeitos)
+- scripts/build_windows.py (inclui as artes ao gerar o executável)
+- GUIA-PIXEL-ART.md (dimensões e grades para LibreSprite)
 
-GitHub Desktop: confira Changes, Commit to main e Push origin.
-Não é necessário gerar outra Release: o executável não foi alterado.
+Para atualizar seu clone, copie os arquivos do projeto preservando
+docs/config.js, confira as alterações no GitHub Desktop e faça commit/push.
+Não publique o executável antigo como se já contivesse esta revisão. Para
+gerar um novo pacote Windows, execute no Windows com os requisitos instalados:
 
-Abra GUIA-PIXEL-ART.md para as medidas dos sprites e posições de referência.
-Base de arte: 550 x 380 pixels. Exibição padrão: 1100 x 760 (2x).
+    python scripts/build_windows.py
+
+A pasta de arte agora usa uma base lógica 640 x 360. Consulte GUIA-PIXEL-ART.md
+antes de desenhar novos elementos ou substituir os spritesheets.

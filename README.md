@@ -3,9 +3,9 @@
 Um computador gigante está atacando a cidade com palavras digitais. O governo
 entrega um canhão laser ao jogador: digite as palavras para defender sua casa.
 
-Prévia acadêmica **0.1.0**, com gráficos provisórios feitos em código.
-
-![Prévia do jogo](docs/assets/gameplay.png)
+Prévia acadêmica **0.2.0** com cenário diurno, interface pixel art e animações
+em spritesheets. A base lógica do jogo é 640×360 px; a exibição padrão é 1280×720.
+As artes podem ser substituídas pelas versões finais feitas no LibreSprite.
 
 ## Jogar sem instalar Python
 
@@ -21,10 +21,15 @@ Windows 10, Python 3.14.6 e pygame-ce 2.5.8.
 - Cinco corredores de palavras, dificuldade progressiva e efeitos de disparo.
 - Pontuação, combos de até x4, precisão, cinco vidas e fim de jogo.
 - Pausa por Esc e pausa automática quando a janela perde o foco.
+- Mira personalizada, corações desenhados em sheet e controles com molduras pixel art.
+- Computador com animação de espera/ataque, cápsulas de palavras animadas,
+  disparo laser em quadros e mar/nuvens em movimento.
 - Ranking SQLite local e fila de envio de partidas ao servidor.
 - API Python/Flask + SQLite, com validação e prevenção de partidas duplicadas.
 - Site HTML/CSS/JavaScript com download e ranking, preparado para GitHub Pages.
 - Script para gerar o executável e workflow de testes e build no GitHub Actions.
+
+As proporções, grids e pontos de integração estão em [`GUIA-PIXEL-ART.md`](GUIA-PIXEL-ART.md).
 
 ## Executar o código-fonte
 

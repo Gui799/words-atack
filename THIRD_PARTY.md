@@ -12,12 +12,14 @@ O empacotamento usa **PyInstaller**, GPL com exceção para distribuição dos
 executáveis gerados. O servidor usa Flask e Waitress, com suas próprias licenças.
 O servidor não é embutido no executável do jogo.
 
-O site usa a fonte **Tiny5**, do Tiny5 Project Authors, sob SIL Open Font License
-1.1. O arquivo é servido localmente em `docs/assets/fonts/Tiny5.ttf`, acompanhado
-da licença `OFL-Tiny5.txt`. Fonte: https://github.com/google/fonts/tree/main/ofl/tiny5
+O site e o jogo usam a fonte **Tiny5**, do Tiny5 Project Authors, sob SIL Open
+Font License 1.1. Os arquivos estão em `docs/assets/fonts/` e
+`game/assets/fonts/`, acompanhados de `OFL-Tiny5.txt`. Fonte:
+https://github.com/google/fonts/tree/main/ofl/tiny5
 
-Não foram utilizadas imagens, músicas ou sprites externos. Os cenários e o ícone
-do site foram criados em código para este projeto. Os gráficos são provisórios.
+Não foram utilizadas imagens, músicas ou sprites de terceiros. As artes de
+`game/assets/` são materiais visuais criados especificamente para esta prévia e
+podem ser substituídos pelo grupo. O site mantém suas próprias imagens em `docs/`.
 
 Para modificar ou substituir bibliotecas, use o código-fonte do projeto,
 instale as dependências desejadas em uma venv e gere novamente o executável

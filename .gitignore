@@ -1,0 +1,7 @@
+build/
+dist/
+preview-dia/
+__pycache__/
+*.py[cod]
+.venv/
+.venv-*

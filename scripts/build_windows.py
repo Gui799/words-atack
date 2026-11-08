@@ -16,6 +16,7 @@ def build():
         sys.executable, "-m", "PyInstaller", "--noconfirm", "--clean", "--onefile",
         "--windowed", "--name", "WordsAtack", "--icon", "NONE",
         "--collect-data", "pygame", "--paths", str(ROOT),
+        "--add-data", str(ROOT / "game" / "assets") + ";game/assets",
         "--distpath", str(ROOT / "dist"), "--workpath", str(ROOT / "build"),
         "--specpath", str(ROOT / "build"), str(ROOT / "run_game.py"),
     ], cwd=ROOT, check=True)
