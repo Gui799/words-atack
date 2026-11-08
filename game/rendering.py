@@ -186,7 +186,8 @@ class Renderer:
             card = self._fit(self.word_frames[int(now * 8) % 3], (width, 24))
             rect = card.get_rect(center=(int(enemy["x"]), int(enemy["y"])))
             self.canvas.blit(card, rect)
-            self._text(enemy["word"], rect.center, 14, self.TEAL if matched else self.CORAL)
+            pygame.draw.rect(self.canvas, self.WHITE if matched else self.CREAM, rect.inflate(-8, -6))
+            self._text(enemy["word"], rect.center, 14, self.NAVY)
 
         for effect in game.effects:
             point = (int(effect["x"]), int(effect["y"]))

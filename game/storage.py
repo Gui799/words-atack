@@ -33,7 +33,7 @@ class Storage:
         self.folder.mkdir(parents=True, exist_ok=True)
         self.database = self.folder / "partidas.sqlite3"
         self.config_file = self.folder / "config.json"
-        self.config = {"nickname": "", "api_url": ""}
+        self.config = {"nickname": "", "api_url": "http://127.0.0.1:5000"}
         self.lock = threading.Lock()
         self.status = "Ranking local · configure o servidor com F2"
         if self.config_file.exists():

@@ -114,6 +114,7 @@ class GameTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.game = Game(self.tmp.name)
+        self.game.storage.save_config(api_url="")
         self.game.nickname = "Player"
         self.game.start()
 
@@ -140,13 +141,13 @@ class GameTests(unittest.TestCase):
         self.assertEqual(self.game.typed, "virus")
 
     def test_pause_and_focus_loss_freeze_simulation(self):
-        self.game.enemies = [self.enemy()]
+        self.game.enemies = [self.enemy(y=100)]
         self.game.handle(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE))
         self.game.update(1)
-        self.assertEqual(self.game.enemies[0]["y"], 300)
+        self.assertEqual(self.game.enemies[0]["y"], 100)
         self.game.handle(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN))
         self.game.update(.5)
-        self.assertEqual(self.game.enemies[0]["y"], 315)
+        self.assertEqual(self.game.enemies[0]["y"], 115)
         self.game.handle(pygame.event.Event(pygame.WINDOWFOCUSLOST))
         self.assertEqual(self.game.state, "paused")
 

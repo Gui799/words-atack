@@ -75,3 +75,4 @@ async function loadRanking() {
 }
 refresh.addEventListener("click", loadRanking);
 loadRanking();
+setInterval(() => { if (!document.hidden && !refresh.disabled) loadRanking(); }, 15000);
