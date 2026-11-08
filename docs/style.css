@@ -190,3 +190,4 @@ td:nth-child(3) { color: var(--green); font-weight: bold; }
 .button.primary { background: #087b7a; color: #fff8bc; box-shadow: 4px 4px 0 #1c304e; }
 .hero-visual { background: #fff8bc; }
 .brand-icon { background: #087b7a; color: #fff8bc; }
+.enemy-mascot { display: block; width: 180px; max-width: 100%; height: auto; margin-bottom: 20px; object-fit: contain; }

@@ -14,7 +14,7 @@ def build():
         raise SystemExit("Gere o .exe no Windows. O PyInstaller não faz compilação cruzada.")
     subprocess.run([
         sys.executable, "-m", "PyInstaller", "--noconfirm", "--clean", "--onefile",
-        "--windowed", "--name", "WordsAtack", "--icon", "NONE",
+        "--windowed", "--name", "WordsAtack", "--icon", str(ROOT / "game/assets/ui/game-icon.ico"),
         "--collect-data", "pygame", "--paths", str(ROOT),
         "--add-data", str(ROOT / "game" / "assets") + ";game/assets",
         "--distpath", str(ROOT / "dist"), "--workpath", str(ROOT / "build"),
