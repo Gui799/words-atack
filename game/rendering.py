@@ -107,14 +107,18 @@ class Renderer:
                     self.canvas.blit(pygame.transform.scale(piece, dest.size), dest)
 
     def panel(self, rect):
-        self._slice(self.ui_panel, rect)
+        rect = pygame.Rect(rect)
+        pygame.draw.rect(self.canvas, self.NAVY, rect)
+        pygame.draw.rect(self.canvas, self.CREAM, rect.inflate(-4, -4))
+        pygame.draw.line(self.canvas, self.WHITE, (rect.left+3, rect.top+2), (rect.right-4, rect.top+2))
 
     def button(self, game, key, label, rect, primary=False):
         rect = pygame.Rect(rect)
         game.button_rects[key] = rect
         hover = rect.collidepoint(game.pointer())
         draw_rect = rect.move(0, -1 if hover else 1)
-        self._slice(self.ui_button, draw_rect, source_border=82, target_border=5)
+        self.panel(draw_rect)
+        pygame.draw.rect(self.canvas, self.CORAL if hover else self.TEAL, (draw_rect.x+2, draw_rect.bottom-4, draw_rect.width-4, 2))
         color = self.CORAL if hover else self.NAVY
         if primary:
             color = self.TEAL if not hover else self.CORAL
@@ -142,8 +146,12 @@ class Renderer:
         # The 4-frame water sheet animates the shoreline in a loop.
         wave_frame = int(now * 7) % len(self.waves)
         wave = self.waves[wave_frame]
+        wave = wave.copy()
+        wave.set_alpha(45)
+        self.canvas.set_clip(pygame.Rect(165, 224, 280, 18))
         for x in range(-64, S.WIDTH, 64):
             self.canvas.blit(wave, (x + int((now * 8) % 16), 216))
+        self.canvas.set_clip(None)
 
         # Computer idle/attack rows, 4 frames each.
         attacking = time.monotonic() < getattr(game, "attack_until", 0)
@@ -156,8 +164,6 @@ class Renderer:
         self.canvas.blit(self.house, (457, 236))
         self.canvas.blit(self.cannon, (483, 226))
 
-        if not active:
-            self._text("DEFENDA SUA CASA!", (S.WIDTH // 2, 90), 16, self.CORAL)
 
     def _hud(self, game):
         self.panel((8, 7, 624, 34))
@@ -177,7 +183,7 @@ class Renderer:
         for enemy in game.enemies:
             matched = bool(game.typed) and enemy["word"].startswith(game.typed)
             width = min(148, max(72, self.fonts[14].size(enemy["word"])[0] + 20))
-            card = pygame.transform.scale(self.word_frames[int(now * 8) % 3], (width, 24))
+            card = self._fit(self.word_frames[int(now * 8) % 3], (width, 24))
             rect = card.get_rect(center=(int(enemy["x"]), int(enemy["y"])))
             self.canvas.blit(card, rect)
             self._text(enemy["word"], rect.center, 14, self.TEAL if matched else self.CORAL)

@@ -20,7 +20,8 @@ from game.rendering import Renderer
 class Game:
     def __init__(self, data_dir=None):
         pygame.init()
-        self.window = pygame.display.set_mode((S.WIDTH, S.HEIGHT), pygame.RESIZABLE)
+        self.fullscreen = "--smoke-test" not in sys.argv
+        self.window = pygame.display.set_mode((0, 0) if self.fullscreen else (1280, 720), pygame.FULLSCREEN if self.fullscreen else pygame.RESIZABLE)
         pygame.display.set_caption(S.TITLE)
         self.canvas = pygame.Surface((S.WIDTH, S.HEIGHT))
         self.renderer = Renderer(self.canvas)
@@ -173,6 +174,10 @@ class Game:
             self.running = False
 
     def handle(self, event):
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
+            self.fullscreen = not self.fullscreen
+            self.window = pygame.display.set_mode((0, 0) if self.fullscreen else (1280, 720), pygame.FULLSCREEN if self.fullscreen else pygame.RESIZABLE)
+            return
         if event.type == pygame.QUIT:
             self.running = False
         elif event.type == pygame.WINDOWFOCUSLOST and self.state == "playing":
