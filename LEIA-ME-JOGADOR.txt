@@ -1,4 +1,4 @@
-WORDS ATACK — PRÉVIA 0.2.0
+WORDS ATACK — PRÉVIA 0.4.0
 =========================
 
 Windows 64 bits. Não precisa de Python instalado.
@@ -14,6 +14,14 @@ Backspace: apagar uma letra
 Esc: pausar ou voltar
 F2 no menu: configurar o servidor do ranking
 Mouse: botões do menu
+Setas e Enter: navegar pelo novo menu
+F9: ligar/desligar música e efeitos (preferência salva)
+F11: alternar entre tela cheia e janela
+Jogar abre a escolha de nickname antes de começar a partida.
+
+ÁUDIO
+Músicas chiptune distintas no menu e na fase. Inclui ambiente de mar,
+efeitos de interface, digitação, laser, impacto, erro e fim de jogo.
 
 REGRAS
 Cinco impactos destroem sua casa.

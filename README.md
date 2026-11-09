@@ -3,7 +3,7 @@
 Um computador gigante está atacando a cidade com palavras digitais. O governo
 entrega um canhão laser ao jogador: digite as palavras para defender sua casa.
 
-Prévia acadêmica **0.2.0** com cenário diurno, interface pixel art e animações
+Prévia acadêmica **0.4.0** com cenário diurno, interface pixel art e animações
 em spritesheets. A base lógica do jogo é 640×360 px; a exibição padrão é 1280×720.
 As artes podem ser substituídas pelas versões finais feitas no LibreSprite.
 
@@ -16,6 +16,16 @@ Compatibilidade do pacote: **Windows 64 bits**. Testado neste projeto em
 Windows 10, Python 3.14.6 e pygame-ce 2.5.8.
 
 ## O que já funciona
+
+- Fase com praia sem coqueiros, nuvens escuras animadas ao redor do computador,
+  pássaros e reflexos em movimento. As palavras usam caixas escuras com texto branco.
+- Vocabulário ampliado com natureza, cotidiano, aventura e tecnologia. A fase
+  recebeu uma nova trilha original com melodia, baixo e percussão.
+
+- Menu clássico com cenário exclusivo de céu e nuvens, navegação por setas/mouse
+  e escolha de nickname em uma tela separada depois de selecionar Jogar.
+- Músicas chiptune próprias para menu e fase, ambiente de mar e efeitos de
+  interface/combate. F9 silencia o áudio e salva a preferência; F11 alterna a tela cheia.
 
 - Nickname, menu, história e casa protegida por um canhão laser.
 - Cinco corredores de palavras, dificuldade progressiva e efeitos de disparo.

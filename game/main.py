@@ -15,10 +15,12 @@ import pygame
 from game import settings as S
 from game.storage import Storage
 from game.rendering import Renderer
+from game.audio import Audio
 
 
 class Game:
     def __init__(self, data_dir=None):
+        pygame.mixer.pre_init(22050, -16, 1, 512)
         pygame.init()
         self.fullscreen = "--smoke-test" not in sys.argv
         self.window = pygame.display.set_mode((0, 0) if self.fullscreen else (1280, 720), pygame.FULLSCREEN if self.fullscreen else pygame.RESIZABLE)
@@ -30,6 +32,9 @@ class Game:
         pygame.display.set_icon(icon)
         self.clock = pygame.time.Clock()
         self.storage = Storage(data_dir)
+        self.audio = Audio(self.storage.folder)
+        self.menu_index = 0
+        self.menu_options = ('start', 'ranking', 'settings', 'quit')
         self.nickname = self.storage.config["nickname"]
         self.api_input = self.storage.config["api_url"]
         self.state = "menu"
@@ -94,7 +99,7 @@ class Game:
     def spawn(self):
         # Mantém espaço entre inimigos da mesma coluna.
         lanes = [x for x in S.LANES if not any(e["x"] == x and e["y"] < 178 for e in self.enemies)]
-        maximum = min(9, 5 + self.level // 2)
+        maximum = min(14, 5 + self.level // 2)
         used = {e["word"] for e in self.enemies}
         words = [word for word in S.WORDS if len(word) <= maximum and word not in used]
         if not lanes or not words:
@@ -102,6 +107,7 @@ class Game:
         self.enemies.append({"word": random.choice(words), "x": random.choice(lanes),
                              "y": 112.0, "speed": min(78, 24 + self.level * 4) + random.uniform(0, 5)})
         self.attack_until = time.monotonic() + .8
+        self.audio.play('spawn')
 
     def shoot(self):
         if not self.typed:
@@ -109,8 +115,11 @@ class Game:
         self.attempts += 1
         target = next((enemy for enemy in self.enemies if enemy["word"] == self.typed), None)
         if target:
+            self.audio.play('laser')
             self.enemies.remove(target)
             self.hits += 1
+            if self.hits % 5 == 0:
+                self.audio.play('level')
             self.combo += 1
             multiplier = min(4, 1 + (self.combo - 1) // 5)
             gained = len(target["word"]) * 10 * multiplier
@@ -118,6 +127,7 @@ class Game:
             self.effects.append({"kind": "laser", "x": target["x"], "y": target["y"], "life": .3, "label": f"+{gained}"})
             self.notice = f"Alvo eliminado! Combo {self.combo} · multiplicador x{multiplier}"
         else:
+            self.audio.play('miss')
             self.combo = 0
             self.notice = "Alvo não encontrado. Confira a palavra e tente outra vez."
         self.notice_time = 1.6
@@ -128,6 +138,7 @@ class Game:
         if self.saved:
             return
         self.saved = True
+        self.audio.play('game_over')
         record = {"id": str(uuid.uuid4()), "nickname": self.nickname,
                   "score": self.score, "words": self.hits, "accuracy": self.accuracy,
                   "duration": round(self.elapsed, 2), "level": self.level}
@@ -153,7 +164,13 @@ class Game:
             self.message = str(error)
 
     def action(self, key):
-        if key in ("start", "retry"):
+        self.audio.play('confirm')
+        if key == 'sound':
+            self.audio.toggle()
+        elif key == 'start':
+            self.message = ''
+            self.state = 'nickname'
+        elif key in ("confirm_name", "retry"):
             self.start()
         elif key == "ranking":
             self.open_ranking()
@@ -172,6 +189,9 @@ class Game:
             self.running = False
 
     def handle(self, event):
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_F9:
+            self.audio.toggle()
+            return
         if event.type == pygame.KEYDOWN and event.key == pygame.K_F11:
             self.fullscreen = not self.fullscreen
             self.window = pygame.display.set_mode((0, 0) if self.fullscreen else (1280, 720), pygame.FULLSCREEN if self.fullscreen else pygame.RESIZABLE)
@@ -186,16 +206,23 @@ class Game:
                     self.action(key)
                     break
         elif event.type == pygame.TEXTINPUT:
-            if self.state == "menu":
+            if self.state == "nickname":
+                self.audio.play('type')
                 cleaned = "".join(c for c in event.text if c.isprintable())
                 self.nickname = (self.nickname + cleaned)[:18]
             elif self.state == "settings":
                 self.api_input = (self.api_input + "".join(c for c in event.text if c.isprintable()))[:250]
             elif self.state == "playing":
+                self.audio.play('type')
                 normalized = unicodedata.normalize("NFD", event.text.lower())
                 self.typed = (self.typed + "".join(c for c in normalized if "a" <= c <= "z"))[:24]
         elif event.type == pygame.KEYDOWN:
+            if self.state == 'menu' and event.key in (pygame.K_UP, pygame.K_DOWN):
+                self.menu_index = (self.menu_index + (1 if event.key == pygame.K_DOWN else -1)) % len(self.menu_options)
+                self.audio.play('hover')
+                return
             if event.key == pygame.K_ESCAPE:
+                self.audio.play('pause')
                 if self.state == "playing":
                     self.state = "paused"
                 elif self.state == "paused":
@@ -204,7 +231,7 @@ class Game:
                     self.state = "menu"
                     self.message = ""
             elif event.key == pygame.K_BACKSPACE:
-                if self.state == "menu":
+                if self.state == "nickname":
                     self.nickname = self.nickname[:-1]
                 elif self.state == "settings":
                     self.api_input = self.api_input[:-1]
@@ -214,7 +241,9 @@ class Game:
                 self.action("settings")
             elif event.key == pygame.K_RETURN:
                 if self.state == "menu":
-                    self.start()
+                    self.action(self.menu_options[self.menu_index])
+                elif self.state == 'nickname':
+                    self.action('confirm_name')
                 elif self.state == "playing":
                     self.shoot()
                 elif self.state == "paused":
@@ -239,6 +268,7 @@ class Game:
             if enemy["y"] + 20 >= S.BASE_Y:
                 self.enemies.remove(enemy)
                 self.lives -= 1
+                self.audio.play('impact')
                 self.combo = 0
                 self.shake = .3
                 self.effects.append({"kind": "impact", "x": enemy["x"], "y": S.BASE_Y, "life": .45})
@@ -252,7 +282,15 @@ class Game:
         self.effects = [effect for effect in self.effects if effect["life"] > 0]
 
     def draw(self):
+        self.audio.set_state(self.state)
         self.renderer.draw(self)
+        hovered = next((key for key, rect in self.button_rects.items() if rect.collidepoint(self.pointer())), None)
+        if hovered != self.audio.hovered:
+            if hovered:
+                self.audio.play('hover')
+                if self.state == 'menu' and hovered in self.menu_options:
+                    self.menu_index = self.menu_options.index(hovered)
+            self.audio.hovered = hovered
         width, height = self.window.get_size()
         scale = min(width / S.WIDTH, height / S.HEIGHT)
         if scale >= 1:
@@ -287,6 +325,9 @@ def main():
         game.nickname = "Defensor"
         game.draw()
         pygame.image.save(game.canvas, str(folder / "menu.png"))
+        game.action('start')
+        game.draw()
+        pygame.image.save(game.canvas, str(folder / 'nickname.png'))
         game.start()
         for index, word in enumerate(("laser", "python", "dados", "pixel", "rede")):
             game.enemies.append({"word": word, "x": S.LANES[index], "y": 128 + index % 3 * 38, "speed": 30})
@@ -297,7 +338,7 @@ def main():
             game.state = state
             game.draw()
             pygame.image.save(game.canvas, str(folder / (state + ".png")))
-        (folder / "smoke-test.json").write_text(json.dumps({"ok": True, "version": S.VERSION, "frozen": bool(getattr(sys, "frozen", False)), "screens": 6}), encoding="utf-8")
+        (folder / "smoke-test.json").write_text(json.dumps({"ok": True, "version": S.VERSION, "frozen": bool(getattr(sys, "frozen", False)), "screens": 7}), encoding="utf-8")
         pygame.quit()
     else:
         game.run()

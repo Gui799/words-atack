@@ -187,6 +187,48 @@ class GameTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 valid_api_url(value)
 
+    def test_menu_opens_nickname_before_starting(self):
+        self.game.state = 'menu'
+        self.game.nickname = ''
+        self.game.handle(pygame.event.Event(pygame.TEXTINPUT, text='ignored'))
+        self.assertEqual(self.game.nickname, '')
+        self.game.handle(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN))
+        self.assertEqual(self.game.state, 'nickname')
+        self.game.handle(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN))
+        self.assertEqual(self.game.state, 'nickname')
+        self.game.handle(pygame.event.Event(pygame.TEXTINPUT, text='Defensor'))
+        self.game.handle(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN))
+        self.assertEqual(self.game.state, 'playing')
+        self.assertEqual(self.game.storage.config['nickname'], 'Defensor')
+
+    def test_expanded_vocabulary_is_typeable_and_unique(self):
+        from game import settings
+        self.assertGreater(len(settings.WORDS), 150)
+        self.assertEqual(len(settings.WORDS), len(set(settings.WORDS)))
+        self.assertTrue(all(word.isascii() and word.isalpha() and word.islower() for word in settings.WORDS))
+        self.game.enemies = [self.enemy(word='criatividade')]
+        self.game.typed = 'criatividade'
+        self.game.shoot()
+        self.assertEqual(self.game.score, 120)
+
+    def test_music_changes_with_screen_and_mute_persists(self):
+        from game.audio import Audio
+        audio = self.game.audio
+        self.assertTrue(audio.enabled)
+        audio.set_state('menu')
+        self.assertEqual(audio.track, 'menu')
+        audio.set_state('nickname')
+        self.assertEqual(audio.track, 'menu')
+        audio.set_state('playing')
+        self.assertEqual(audio.track, 'stage')
+        self.assertTrue(pygame.mixer.Channel(1).get_busy())
+        audio.set_state('paused')
+        self.assertFalse(pygame.mixer.Channel(1).get_busy())
+        audio.toggle()
+        audio.set_state('menu')
+        self.assertEqual(pygame.mixer.music.get_volume(), 0)
+        self.assertTrue(Audio(self.tmp.name).muted)
+
 
 if __name__ == "__main__":
     unittest.main()

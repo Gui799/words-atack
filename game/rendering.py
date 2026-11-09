@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import time
+import math
 
 import pygame
 
@@ -25,10 +26,8 @@ class Renderer:
         self.started = time.monotonic()
         pygame.mouse.set_visible(False)
 
-        self.background = self._image("backgrounds/praia_dia.png")
+        self.background = self._image("backgrounds/praia_sem_coqueiros.png")
         self.background = pygame.transform.scale(self.background, (S.WIDTH, S.HEIGHT))
-        self.ui_panel = self._image("ui/painel.png", alpha=True)
-        self.ui_button = self._image("ui/botao.png", alpha=True)
         self.cursor = self._trim(self._image("ui/cursor.png", alpha=True), (16, 16))
 
         self.computer = self._sheet("animations/computador_sheet.png", 4, 2, (96, 64))
@@ -143,22 +142,42 @@ class Renderer:
             x = int((now * speed + offset) % (S.WIDTH + 90)) - 55
             self._cloud(x, y, scale)
 
-        # The 4-frame water sheet animates the shoreline in a loop.
-        wave_frame = int(now * 7) % len(self.waves)
-        wave = self.waves[wave_frame]
-        wave = wave.copy()
-        wave.set_alpha(45)
-        self.canvas.set_clip(pygame.Rect(165, 224, 280, 18))
-        for x in range(-64, S.WIDTH, 64):
-            self.canvas.blit(wave, (x + int((now * 8) % 16), 216))
-        self.canvas.set_clip(None)
+        # Moving sea reflections, kept inside the ocean band.
+        for index in range(24):
+            x = int((index * 53 + now * (7 + index % 3)) % 640)
+            y = 230 + index % 5 * 5
+            color = (147, 239, 230) if index % 2 else (65, 211, 212)
+            length = 5 + index % 4 * 3
+            pygame.draw.rect(self.canvas, color, (x, y, length, 1))
+            if index % 4 == 0:
+                pygame.draw.rect(self.canvas, self.WHITE, (x+3, y-1, 2, 1))
+
+        # Two distant seabirds cross the sky at different speeds.
+        for index in range(2):
+            x = int((now * (10+index*3) + index*370) % 720)-40
+            y = 165 + index*27 + int(math.sin(now*.8+index)*3)
+            flap = 2 if math.sin(now*4+index) > 0 else -1
+            pygame.draw.lines(self.canvas, (62, 124, 154), False, [(x-5,y-flap),(x,y),(x+5,y-flap)], 1)
+
+        # A localized storm follows the computer without covering the words.
+        for side, x in enumerate((211, 356)):
+            drift = int(math.sin(now*.7+side*2)*5)
+            self._storm_cloud(x+drift, 65+int(math.sin(now+side)*3))
+        for index in range(9):
+            angle = now*.5 + index*math.tau/9
+            x = int(320+math.cos(angle)*101)
+            y = int(78+math.sin(angle)*22)
+            pygame.draw.rect(self.canvas, (105, 173, 192), (x, y, 2, 2))
+        if time.monotonic() < getattr(game, 'attack_until', 0):
+            for x in (251, 385):
+                pygame.draw.lines(self.canvas, self.YELLOW, False, [(x,79),(x-3,86),(x+2,86),(x-2,93)], 1)
 
         # Computer idle/attack rows, 4 frames each.
         attacking = time.monotonic() < getattr(game, "attack_until", 0)
         row = 1 if attacking else 0
         frame = int(now * (12 if attacking else 2.3)) % 4
         computer = self.computer[row * 4 + frame]
-        self.canvas.blit(computer, computer.get_rect(midtop=(S.WIDTH // 2, 44)))
+        self.canvas.blit(computer, computer.get_rect(midtop=(S.WIDTH // 2, 46+int(math.sin(now*1.6)*2))))
 
         # House and the player's cannon sit on the sunlit sand.
         self.canvas.blit(self.house, (457, 236))
@@ -175,6 +194,13 @@ class Renderer:
             self.canvas.blit(heart, (542 + index * 15, 20))
         self._text("ESC", (612, 24), 10, self.NAVY)
 
+    def _storm_cloud(self, x, y):
+        for dx, dy, w, h in ((0,12,72,15),(8,5,22,20),(26,0,27,25),(49,8,22,18)):
+            pygame.draw.rect(self.canvas, (40, 56, 78), (x+dx,y+dy,w,h))
+        pygame.draw.rect(self.canvas, (57, 76, 98), (x+10,y+9,19,10))
+        pygame.draw.rect(self.canvas, (67, 87, 108), (x+28,y+4,22,13))
+        pygame.draw.rect(self.canvas, (28, 44, 66), (x+5,y+24,62,4))
+
     def draw_play(self, game):
         self.scene(game, True)
         self._hud(game)
@@ -182,12 +208,17 @@ class Renderer:
 
         for enemy in game.enemies:
             matched = bool(game.typed) and enemy["word"].startswith(game.typed)
-            width = min(148, max(72, self.fonts[14].size(enemy["word"])[0] + 20))
-            card = self._fit(self.word_frames[int(now * 8) % 3], (width, 24))
-            rect = card.get_rect(center=(int(enemy["x"]), int(enemy["y"])))
-            self.canvas.blit(card, rect)
-            pygame.draw.rect(self.canvas, self.WHITE if matched else self.CREAM, rect.inflate(-8, -6))
-            self._text(enemy["word"], rect.center, 14, self.NAVY)
+            width = min(114, max(80, self.fonts[14].size(enemy["word"])[0] + 20))
+            rect = pygame.Rect(0, 0, width, 26)
+            rect.center = (int(enemy['x']), int(enemy['y']))
+            pygame.draw.rect(self.canvas, (18, 31, 49), rect.move(2, 3))
+            pygame.draw.rect(self.canvas, self.SEA if matched else (109, 143, 169), rect)
+            pygame.draw.rect(self.canvas, (23, 37, 58), rect.inflate(-4, -4))
+            pygame.draw.line(self.canvas, (52, 73, 96), (rect.left+3,rect.top+3), (rect.right-4,rect.top+3))
+            self._text(enemy["word"], rect.center, 14, (255, 255, 255))
+            if matched:
+                progress = int((rect.width-8) * len(game.typed)/len(enemy['word']))
+                pygame.draw.rect(self.canvas, self.SEA, (rect.x+4,rect.bottom-4,progress,2))
 
         for effect in game.effects:
             point = (int(effect["x"]), int(effect["y"]))
@@ -209,22 +240,55 @@ class Renderer:
         message = game.notice if game.notice_time else "Digite a palavra e pressione ENTER"
         self._text(message[:54], (320, 352), 10, self.CORAL if game.notice_time else self.NAVY)
 
+    def menu_background(self):
+        now = time.monotonic() - self.started
+        self.canvas.fill((75, 190, 225))
+        for y, color in ((100, (91, 198, 229)), (190, (117, 208, 234)), (270, (147, 220, 240))):
+            pygame.draw.rect(self.canvas, color, (0, y, 640, 360-y))
+        # Separate sky-only backdrop: no house, cannon, enemies or HUD.
+        for index in range(7):
+            x = (index * 115 + now * (3 + index % 2)) % 800 - 100
+            self._cloud(x, 70 + (index % 3) * 47, .8)
+        for layer, (height, scale) in enumerate(((290, 2.7), (325, 3.5))):
+            for index in range(7):
+                x = (index * 120 - now * (2 + layer)) % 900 - 140
+                self._cloud(x, height + (index % 2) * 9, scale)
+
     def draw_menu(self, game):
-        self.scene(game)
-        self.panel((72, 88, 496, 250))
-        self._text("WORDS", (320, 117), 25, self.NAVY)
-        self._text("ATACK!", (320, 145), 25, self.CORAL)
-        self._text("A cidade precisa de você", (320, 170), 12, self.TEAL)
-        self._text("Digite seu nickname:", (320, 195), 12, self.NAVY)
-        self.panel((220, 204, 200, 26))
-        cursor = "_" if int(time.monotonic() * 2) % 2 == 0 else ""
-        self._text((game.nickname or "Defensor") + cursor, (320, 217), 14, self.TEAL)
-        self.button(game, "start", "JOGAR", (243, 239, 154, 34), True)
-        self.button(game, "ranking", "RANKING", (100, 282, 126, 32))
-        self.button(game, "settings", "AJUSTES", (235, 282, 140, 32))
-        self.button(game, "quit", "SAIR", (384, 282, 156, 32))
+        self.menu_background()
+        title = 'WORDS ATACK'
+        for dx, dy in ((-2, 0), (2, 0), (0, -2), (0, 3), (3, 4)):
+            self._text(title, (320+dx, 85+dy), 48, self.NAVY)
+        self._text(title, (320, 85), 48, self.SAND)
+        self._text('SEU TECLADO É SUA DEFESA', (320, 124), 14, self.NAVY)
+        for index, (key, label) in enumerate(zip(game.menu_options, ('JOGAR', 'RANKING', 'AJUSTES', 'SAIR'))):
+            y = 169 + index * 31
+            rect = pygame.Rect(215, y-14, 210, 29)
+            game.button_rects[key] = rect
+            selected = index == game.menu_index
+            self._text(label, (322, y+2), 25, self.NAVY)
+            self._text(label, (320, y), 25, self.CREAM if selected else (240, 225, 163))
+            if selected:
+                x = 239 + (int(time.monotonic()*2) % 2) * 2
+                pygame.draw.polygon(self.canvas, self.NAVY, [(x-2,y-7),(x+7,y),(x-2,y+7)])
+                pygame.draw.polygon(self.canvas, self.SAND, [(x,y-4),(x+4,y),(x,y+4)])
+        self.button(game, 'sound', 'SOM: OFF' if game.audio.muted else 'SOM: ON', (526, 10, 104, 25))
+        self._text('SETAS: SELECIONAR     ENTER: CONFIRMAR', (320, 315), 12, self.NAVY)
+        self._text('F9 SOM     F11 TELA CHEIA', (320, 345), 10, self.NAVY)
+
+    def draw_nickname(self, game):
+        self.menu_background()
+        self.panel((130, 89, 380, 196))
+        self._text('QUEM VAI DEFENDER A CIDADE?', (320, 117), 20, self.NAVY)
+        self._text('Escolha seu nickname', (320, 147), 14, self.TEAL)
+        self.panel((202, 166, 236, 33))
+        cursor = '_' if int(time.monotonic()*2) % 2 == 0 else ''
+        self._text(game.nickname + cursor, (320, 182), 20, self.NAVY)
+        self._text('Até 18 caracteres', (320, 211), 10, self.MUTED)
+        self.button(game, 'confirm_name', 'COMEÇAR', (218, 232, 135, 32), True)
+        self.button(game, 'menu', 'VOLTAR', (364, 232, 100, 32))
         if game.message:
-            self._text(game.message[:42], (320, 327), 10, self.CORAL)
+            self._text(game.message[:55], (320, 302), 12, self.CORAL)
 
     def draw_overlay(self, game, heading, description):
         self.draw_play(game)
@@ -236,7 +300,7 @@ class Renderer:
         self._text(description, (320, 159), 12, self.NAVY)
 
     def draw_ranking(self, game):
-        self.scene(game)
+        self.menu_background()
         self.panel((72, 62, 496, 266))
         self._text("RANKING DOS DEFENSORES", (320, 88), 20, self.NAVY)
         self._text("#  NICKNAME                         PONTOS", (320, 119), 12, self.TEAL)
@@ -248,7 +312,7 @@ class Renderer:
         self.button(game, "menu", "VOLTAR", (242, 270, 156, 34))
 
     def draw_settings(self, game):
-        self.scene(game)
+        self.menu_background()
         self.panel((80, 69, 480, 246))
         self._text("AJUSTES DO RANKING", (320, 96), 20, self.NAVY)
         self._text("URL do servidor (vazio = modo local):", (320, 137), 12, self.TEAL)
@@ -267,6 +331,8 @@ class Renderer:
         game.button_rects = {}
         if game.state == "menu":
             self.draw_menu(game)
+        elif game.state == 'nickname':
+            self.draw_nickname(game)
         elif game.state == "playing":
             self.draw_play(game)
         elif game.state == "ranking":

@@ -1,5 +1,9 @@
 # Componentes de terceiros
 
+As músicas chiptune, o ambiente e os efeitos em `game/assets/audio/` são
+composições e sons sintetizados para o projeto, sem gravações de terceiros.
+O script `scripts/generate_audio.py` permite regenerar esses arquivos WAV.
+
 O jogo usa **pygame-ce 2.5.8** (LGPL 2.1 e licenças das bibliotecas SDL e da fonte
 distribuída pelo pacote) e o interpretador **CPython** (licença PSF).
 O ZIP para jogadores inclui os avisos encontrados no pacote pygame-ce e a

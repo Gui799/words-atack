@@ -3,6 +3,7 @@ data/
 *.log
 dist/
 preview-dia/
+preview-build/
 __pycache__/
 *.py[cod]
 .venv/

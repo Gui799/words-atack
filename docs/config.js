@@ -4,6 +4,6 @@ window.WORDS_ATACK_CONFIG = {
   // Informe a hospedagem do Flask. Vazio: usa o Flask local se servido por ele.
   apiBase: "",
   // Anexe WordsAtack-Windows.zip a uma Release normal (não pré-release).
-  downloadUrl: "downloads/WordsAtack-Windows-ranking.zip",
+  downloadUrl: "downloads/WordsAtack-Windows-v0.4.0.zip",
   repositoryUrl: "https://github.com/Gui799/words-atack"
 };
